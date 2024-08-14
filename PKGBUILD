@@ -4,7 +4,7 @@
 pkgname=heroic-games-launcher
 _app_id=com.heroicgameslauncher.hgl
 pkgver=2.15.1
-pkgrel=1
+pkgrel=2
 pkgdesc="Native GOG, Epic Games and Amazon games launcher for Linux"
 arch=('x86_64')
 url="https://heroicgameslauncher.com/"
@@ -22,7 +22,9 @@ prepare() {
 build() {
   cd HeroicGamesLauncher-${pkgver}
   export PNPM_HOME="$srcdir/pnpm-home"
+  export PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
   pnpm install
+  pnpm download-helper-binaries
   pnpm dist:linux tar.xz
 }
 
@@ -37,5 +39,8 @@ package() {
   install -Dm644 public/icon.png "${pkgdir}/usr/share/icons/hicolor/1024x1024/apps/${_app_id}.png"
   install -Dm644 "flatpak/${_app_id}.png" -t "${pkgdir}/usr/share/icons/hicolor/128x128/apps/"
   install -Dm644 "flatpak/${_app_id}.desktop" -t "${pkgdir}/usr/share/applications/"
+
+  # Remove Windows binaries
+  rm -rv "${pkgdir}/opt/heroic/resources/app.asar.unpacked/build/bin/x64/win32/"
 }
 
