@@ -4,43 +4,52 @@
 pkgname=heroic-games-launcher
 _app_id=com.heroicgameslauncher.hgl
 pkgver=2.15.2
-pkgrel=1
+pkgrel=2
+_electronversion=31
 pkgdesc="Native GOG, Epic Games and Amazon games launcher for Linux"
 arch=('x86_64')
 url="https://heroicgameslauncher.com/"
 license=('GPL-3.0-or-later')
-depends=('alsa-lib' 'gtk3' 'nss' 'which')
-makedepends=('pnpm')
-source=("${pkgname}-${pkgver}.tar.gz::https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher/archive/refs/tags/v${pkgver}.tar.gz")
-sha256sums=('f97eb1c642f054e98641cada20e46b6e4f5b3e9bae3569657afd18575904756f')
+depends=("electron${_electronversion}" 'which')
+makedepends=('npm' 'pnpm' 'python')
+source=("${pkgname}-${pkgver}.tar.gz::https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher/archive/refs/tags/v${pkgver}.tar.gz"
+        'heroic.sh')
+sha256sums=('f97eb1c642f054e98641cada20e46b6e4f5b3e9bae3569657afd18575904756f'
+            'bdacef2303b6c6cb0b06cfe176494f1c34433c88f7f569f86c52a3f591824a8f')
 
 prepare() {
   cd HeroicGamesLauncher-${pkgver}
   desktop-file-edit --set-key=Exec --set-value=heroic "flatpak/${_app_id}.desktop"
+
+  sed -i "s|@ELECTRONVERSION@|${_electronversion}|" "$srcdir/heroic.sh"
 }
 
 build() {
   cd HeroicGamesLauncher-${pkgver}
   export PNPM_HOME="$srcdir/pnpm-home"
   export PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
+  export ELECTRON_SKIP_BINARY_DOWNLOAD=1
+  electronDist="/usr/lib/electron${_electronversion}"
+  electronVer="$(sed s/^v// /usr/lib/electron${_electronversion}/version)"
   pnpm install
   pnpm download-helper-binaries
-  pnpm dist:linux tar.xz
+  pnpm electron-vite build
+  pnpm electron-builder --linux --x64 --dir \
+    ${dist} -c.electronDist=${electronDist} -c.electronVersion=${electronVer}
 }
 
 package() {
   cd HeroicGamesLauncher-${pkgver}
-  install -d "${pkgdir}/opt/heroic"
-  cp -r dist/linux-unpacked/* "${pkgdir}/opt/heroic"
+  install -Dm644 dist/linux-unpacked/resources/app.asar -t "$pkgdir/usr/lib/heroic/"
+  cp -r dist/linux-unpacked/resources/app.asar.unpacked "$pkgdir/usr/lib/heroic"
 
-  install -d "${pkgdir}/usr/bin"
-  ln -s /opt/heroic/heroic "${pkgdir}/usr/bin/"
+  install -Dm755 "$srcdir/heroic.sh" "$pkgdir/usr/bin/heroic"
 
   install -Dm644 public/icon.png "${pkgdir}/usr/share/icons/hicolor/1024x1024/apps/${_app_id}.png"
   install -Dm644 "flatpak/${_app_id}.png" -t "${pkgdir}/usr/share/icons/hicolor/128x128/apps/"
   install -Dm644 "flatpak/${_app_id}.desktop" -t "${pkgdir}/usr/share/applications/"
 
   # Remove Windows binaries
-  rm -rv "${pkgdir}/opt/heroic/resources/app.asar.unpacked/build/bin/x64/win32/"
+#  rm -rv "${pkgdir}/opt/heroic/resources/app.asar.unpacked/build/bin/x64/win32/"
 }
 
