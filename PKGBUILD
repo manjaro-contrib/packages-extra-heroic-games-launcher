@@ -3,22 +3,31 @@
 
 pkgname=heroic-games-launcher
 _app_id=com.heroicgameslauncher.hgl
-pkgver=2.15.2
-pkgrel=3
+pkgver=2.16.0
+pkgrel=1
 _electronversion=31
 pkgdesc="Native GOG, Epic Games and Amazon games launcher for Linux"
 arch=('x86_64')
 url="https://heroicgameslauncher.com/"
 license=('GPL-3.0-or-later')
-depends=("electron${_electronversion}" 'which')
-makedepends=('npm' 'pnpm' 'python')
-source=("${pkgname}-${pkgver}.tar.gz::https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher/archive/refs/tags/v${pkgver}.tar.gz"
+depends=(
+  "electron${_electronversion}"
+  'which'
+)
+makedepends=(
+  'git'
+  'npm'
+  'pnpm'
+  'python'
+)
+source=("git+https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher.git#tag=v$pkgver"
+#source=("${pkgname}-${pkgver}.tar.gz::https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher/archive/refs/tags/v${pkgver}.tar.gz"
         'heroic.sh')
-sha256sums=('f97eb1c642f054e98641cada20e46b6e4f5b3e9bae3569657afd18575904756f'
+sha256sums=('ca8962d64c49c90c4996f7c7dc05255497dc995c1f07526fd43efa99f4650346'
             'bdacef2303b6c6cb0b06cfe176494f1c34433c88f7f569f86c52a3f591824a8f')
 
 prepare() {
-  cd HeroicGamesLauncher-${pkgver}
+  cd HeroicGamesLauncher
   desktop-file-edit --set-key=Exec --set-value=heroic --set-key=StartupWMClass --set-value=heroic \
     "flatpak/${_app_id}.desktop"
 
@@ -26,7 +35,7 @@ prepare() {
 }
 
 build() {
-  cd HeroicGamesLauncher-${pkgver}
+  cd HeroicGamesLauncher
   export PNPM_HOME="$srcdir/pnpm-home"
   export PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
   export ELECTRON_SKIP_BINARY_DOWNLOAD=1
@@ -40,7 +49,7 @@ build() {
 }
 
 package() {
-  cd HeroicGamesLauncher-${pkgver}
+  cd HeroicGamesLauncher
   install -Dm644 dist/linux-unpacked/resources/app.asar -t "$pkgdir/usr/lib/heroic/"
   cp -r dist/linux-unpacked/resources/app.asar.unpacked "$pkgdir/usr/lib/heroic"
 
@@ -50,7 +59,7 @@ package() {
   install -Dm644 "flatpak/${_app_id}.png" -t "${pkgdir}/usr/share/icons/hicolor/128x128/apps/"
   install -Dm644 "flatpak/${_app_id}.desktop" -t "${pkgdir}/usr/share/applications/"
 
-  # Remove Windows binaries
-#  rm -rv "${pkgdir}/opt/heroic/resources/app.asar.unpacked/build/bin/x64/win32/"
+  # Remove ARM binaries
+  rm -rv "${pkgdir}/usr/lib/heroic/app.asar.unpacked/build/bin/arm64/"
 }
 
