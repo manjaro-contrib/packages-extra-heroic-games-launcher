@@ -3,7 +3,7 @@
 
 pkgname=heroic-games-launcher
 _app_id=com.heroicgameslauncher.hgl
-pkgver=2.17.0
+pkgver=2.17.1
 pkgrel=1
 _electronversion=36
 pkgdesc="Native GOG, Epic Games and Amazon games launcher for Linux"
@@ -23,7 +23,7 @@ makedepends=(
 source=("git+https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher.git#tag=v$pkgver"
 #source=("${pkgname}-${pkgver}.tar.gz::https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher/archive/refs/tags/v${pkgver}.tar.gz"
         'heroic.sh')
-sha256sums=('fd34c8a1fa0355618e0dec0139b31af9b9ef46c730c05fa360b5d1f107dc769d'
+sha256sums=('ac2148dee36d82b256080bc8f486a0c2bbbeaef0af7385f411db011edc9239ee'
             'bdacef2303b6c6cb0b06cfe176494f1c34433c88f7f569f86c52a3f591824a8f')
 
 prepare() {
