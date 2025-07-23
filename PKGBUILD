@@ -3,8 +3,9 @@
 
 pkgname=heroic-games-launcher
 _app_id=com.heroicgameslauncher.hgl
-pkgver=2.17.2
+pkgver=2.18.0
 pkgrel=1
+_nodeversion=22
 _electronversion=36
 pkgdesc="Native GOG, Epic Games and Amazon games launcher for Linux"
 arch=('x86_64')
@@ -16,17 +17,30 @@ depends=(
 )
 makedepends=(
   'git'
-  'npm'
+  'nvm'
   'pnpm'
   'python'
 )
 source=("git+https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher.git#tag=v$pkgver"
         'heroic.sh')
-sha256sums=('2828596f43d5cea9141bf7fb870997a80ece81d0f6b2c7c67cf7c02baec43695'
+sha256sums=('ec0a6ffd80eca1c8c5c41752ec2f7d4c004eb03b12221ede67d9928b3e244107'
             'bdacef2303b6c6cb0b06cfe176494f1c34433c88f7f569f86c52a3f591824a8f')
+
+_ensure_local_nvm() {
+  # let's be sure we are starting clean
+  which nvm >/dev/null 2>&1 && nvm deactivate && nvm unload
+  export NVM_DIR="${srcdir}/.nvm"
+
+  # The init script returns 3 if version specified
+  # in ./.nvmrc is not (yet) installed in $NVM_DIR
+  # but nvm itself still gets loaded ok
+  source /usr/share/nvm/init-nvm.sh || [[ $? != 1 ]]
+}
 
 prepare() {
   cd HeroicGamesLauncher
+  _ensure_local_nvm
+  nvm install "${_nodeversion}"
 
   # Set StartupWMClass
   desktop-file-edit --set-key=Exec --set-value=heroic --set-key=StartupWMClass --set-value=heroic \
@@ -42,6 +56,7 @@ build() {
   export ELECTRON_SKIP_BINARY_DOWNLOAD=1
   electronDist="/usr/lib/electron${_electronversion}"
   electronVer="$(sed s/^v// /usr/lib/electron${_electronversion}/version)"
+  _ensure_local_nvm
   pnpm install
   pnpm download-helper-binaries
   pnpm electron-vite build
