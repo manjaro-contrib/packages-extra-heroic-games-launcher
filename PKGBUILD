@@ -4,7 +4,7 @@
 pkgname=heroic-games-launcher
 _app_id=com.heroicgameslauncher.hgl
 pkgver=2.18.1
-pkgrel=1
+pkgrel=2
 _nodeversion=22
 _electronversion=36
 pkgdesc="Native GOG, Epic Games and Amazon games launcher for Linux"
@@ -13,6 +13,7 @@ url="https://heroicgameslauncher.com/"
 license=('GPL-3.0-or-later')
 depends=(
   "electron${_electronversion}"
+  'rsync'
   'which'
 )
 makedepends=(
@@ -20,6 +21,14 @@ makedepends=(
   'nvm'
   'pnpm'
   'python'
+)
+optdepends=(
+  'gamemode: GameMode support'
+  'gamescope: Gamescope support'
+  'lib32-gamemode: GameMode support (32-bit)'
+  'lib32-mangohud: MangoHud support (32-bit)'
+  'mangohud: MangoHud support'
+  'umu-launcher: Proton support'
 )
 source=("git+https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher.git#tag=v$pkgver"
         'heroic.sh')
