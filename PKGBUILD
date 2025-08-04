@@ -3,7 +3,7 @@
 
 pkgname=heroic-games-launcher
 _app_id=com.heroicgameslauncher.hgl
-pkgver=2.18.0
+pkgver=2.18.1
 pkgrel=1
 _nodeversion=22
 _electronversion=36
@@ -23,7 +23,7 @@ makedepends=(
 )
 source=("git+https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher.git#tag=v$pkgver"
         'heroic.sh')
-sha256sums=('ec0a6ffd80eca1c8c5c41752ec2f7d4c004eb03b12221ede67d9928b3e244107'
+sha256sums=('85e842109249b7f830dba57a76ff04f7bab92179874c7daabb7d660f25843f9f'
             'bdacef2303b6c6cb0b06cfe176494f1c34433c88f7f569f86c52a3f591824a8f')
 
 _ensure_local_nvm() {
