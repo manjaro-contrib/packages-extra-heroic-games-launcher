@@ -1,3 +1,3 @@
 #!/bin/bash
 
-exec electron@ELECTRONVERSION@ /opt/Heroic/app.asar "$@"
+exec electron@ELECTRONVERSION@ /var/opt/heroic/app.asar "$@"
