@@ -4,7 +4,7 @@
 pkgname=heroic-games-launcher
 _app_id=com.heroicgameslauncher.hgl
 pkgver=2.18.1
-pkgrel=4
+pkgrel=5
 _nodeversion=22
 _electronversion=36
 pkgdesc="Native GOG, Epic Games and Amazon games launcher for Linux"
@@ -33,7 +33,7 @@ optdepends=(
 source=("git+https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher.git#tag=v$pkgver"
         'heroic.sh')
 sha256sums=('85e842109249b7f830dba57a76ff04f7bab92179874c7daabb7d660f25843f9f'
-            '78fab8388f8f5e50791bf1f97cfd6f5b2f0fa237c2768e2bf6c6591e7e7c90e3')
+            'add3cbb1bfa52db93065dfbb1221a1ab3bfa03fbe0a7ab79829e8fd35a68c922')
 
 _ensure_local_nvm() {
   # let's be sure we are starting clean
@@ -75,8 +75,8 @@ build() {
 
 package() {
   cd HeroicGamesLauncher
-  install -Dm644 dist/linux-unpacked/resources/app.asar -t "$pkgdir/var/opt/heroic/"
-  cp -r dist/linux-unpacked/resources/app.asar.unpacked "$pkgdir/var/opt/heroic"
+  install -Dm644 dist/linux-unpacked/resources/app.asar -t "$pkgdir/opt/heroic/"
+  cp -r dist/linux-unpacked/resources/app.asar.unpacked "$pkgdir/opt/heroic"
 
   install -Dm755 "$srcdir/heroic.sh" "$pkgdir/usr/bin/heroic"
 
