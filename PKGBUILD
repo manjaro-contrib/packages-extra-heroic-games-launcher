@@ -10,7 +10,7 @@ _electronversion=36
 pkgdesc="Native GOG, Epic Games and Amazon games launcher for Linux"
 arch=('x86_64')
 url="https://heroicgameslauncher.com/"
-license=('GPL-3.0-or-later')
+license=('GPL-3.0-only')
 depends=(
   "electron${_electronversion}"
   'rsync'
