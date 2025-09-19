@@ -4,7 +4,7 @@
 pkgname=heroic-games-launcher
 _app_id=com.heroicgameslauncher.hgl
 pkgver=2.18.1
-pkgrel=5
+pkgrel=6
 _nodeversion=22
 _electronversion=36
 pkgdesc="Native GOG, Epic Games and Amazon games launcher for Linux"
@@ -31,9 +31,10 @@ optdepends=(
   'umu-launcher: Proton support'
 )
 source=("git+https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher.git#tag=v$pkgver"
-        'heroic.sh')
+        'heroic.sh' 'fix-exec-heroic.patch')
 sha256sums=('85e842109249b7f830dba57a76ff04f7bab92179874c7daabb7d660f25843f9f'
-            'add3cbb1bfa52db93065dfbb1221a1ab3bfa03fbe0a7ab79829e8fd35a68c922')
+            'add3cbb1bfa52db93065dfbb1221a1ab3bfa03fbe0a7ab79829e8fd35a68c922'
+            '3bbf6f9f071687d50898de76d1762bc39a3749c2685dd0af932579f9029a3123')
 
 _ensure_local_nvm() {
   # let's be sure we are starting clean
@@ -56,6 +57,9 @@ prepare() {
     "flatpak/${_app_id}.desktop"
 
   sed -i "s|@ELECTRONVERSION@|${_electronversion}|" "$srcdir/heroic.sh"
+  
+  # Fix Add-to-Steam
+  patch -p1 -i $srcdir/fix-exec-heroic.patch
 }
 
 build() {
