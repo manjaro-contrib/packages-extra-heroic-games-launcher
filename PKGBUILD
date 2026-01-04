@@ -4,7 +4,7 @@
 pkgname=heroic-games-launcher
 _app_id=com.heroicgameslauncher.hgl
 pkgver=2.18.1
-pkgrel=7
+pkgrel=8
 _nodeversion=22
 _electronversion=36
 pkgdesc="Native GOG, Epic Games and Amazon games launcher for Linux"
@@ -52,8 +52,8 @@ prepare() {
   _ensure_local_nvm
   nvm install "${_nodeversion}"
 
-  # Set StartupWMClass
-  desktop-file-edit --set-key=Exec --set-value=heroic --set-key=StartupWMClass --set-value="heroic %u" \
+  # Set Exec & StartupWMClass
+  desktop-file-edit --set-key=Exec --set-value="heroic %u" --set-key=StartupWMClass --set-value=heroic \
     "flatpak/${_app_id}.desktop"
 
   sed -i "s|@ELECTRONVERSION@|${_electronversion}|" "$srcdir/heroic.sh"
