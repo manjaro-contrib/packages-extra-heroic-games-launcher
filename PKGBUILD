@@ -3,10 +3,10 @@
 
 pkgname=heroic-games-launcher
 _app_id=com.heroicgameslauncher.hgl
-pkgver=2.18.1
-pkgrel=8
-_nodeversion=22
-_electronversion=36
+pkgver=2.19.0
+pkgrel=1
+_nodeversion=24
+_electronversion=39
 pkgdesc="Native GOG, Epic Games and Amazon games launcher for Linux"
 arch=('x86_64')
 url="https://heroicgameslauncher.com/"
@@ -18,6 +18,7 @@ depends=(
 )
 makedepends=(
   'git'
+  'imagemagick'
   'nvm'
   'pnpm'
   'python'
@@ -31,8 +32,9 @@ optdepends=(
   'umu-launcher: Proton support'
 )
 source=("git+https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher.git#tag=v$pkgver"
-        'heroic.sh' 'fix-exec-heroic.patch')
-sha256sums=('85e842109249b7f830dba57a76ff04f7bab92179874c7daabb7d660f25843f9f'
+        'heroic.sh'
+        'fix-exec-heroic.patch')
+sha256sums=('1d72786287b249c8e7f3e3f024e0c0aecfd749c4c36f21389402e0a4a3df3562'
             'add3cbb1bfa52db93065dfbb1221a1ab3bfa03fbe0a7ab79829e8fd35a68c922'
             '3bbf6f9f071687d50898de76d1762bc39a3749c2685dd0af932579f9029a3123')
 
@@ -52,8 +54,8 @@ prepare() {
   _ensure_local_nvm
   nvm install "${_nodeversion}"
 
-  # Set Exec & StartupWMClass
-  desktop-file-edit --set-key=Exec --set-value="heroic %u" --set-key=StartupWMClass --set-value=heroic \
+  # Set Exec
+  desktop-file-edit --set-key=Exec --set-value="heroic --ozone-platform-hint=auto %u" \
     "flatpak/${_app_id}.desktop"
 
   sed -i "s|@ELECTRONVERSION@|${_electronversion}|" "$srcdir/heroic.sh"
@@ -75,6 +77,10 @@ build() {
   pnpm electron-vite build
   pnpm electron-builder --linux --x64 --dir \
     ${dist} -c.electronDist=${electronDist} -c.electronVersion=${electronVer}
+
+  for i in 16 32 48 64 128 256 512; do
+    magick public/icon.png -resize "${i}x${i}" "public/icon_${i}x${i}.png"
+  done
 }
 
 package() {
@@ -84,8 +90,13 @@ package() {
 
   install -Dm755 "$srcdir/heroic.sh" "$pkgdir/usr/bin/heroic"
 
-  install -Dm644 public/icon.png "${pkgdir}/usr/share/icons/hicolor/1024x1024/apps/${_app_id}.png"
-  install -Dm644 "flatpak/${_app_id}.png" -t "${pkgdir}/usr/share/icons/hicolor/128x128/apps/"
+  for i in 16 32 48 64 128 256 512; do
+    install -Dm644 public/icon_${i}x${i}.png \
+      "$pkgdir/usr/share/icons/hicolor/${i}x${i}/apps/${_app_id}.png"
+  done
+  install -Dm644 public/icon.png \
+    "${pkgdir}/usr/share/icons/hicolor/1024x1024/apps/${_app_id}.png"
+
   install -Dm644 "flatpak/${_app_id}.desktop" -t "${pkgdir}/usr/share/applications/"
 }
 
