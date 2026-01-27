@@ -3,8 +3,8 @@
 
 pkgname=heroic-games-launcher
 _app_id=com.heroicgameslauncher.hgl
-pkgver=2.19.0
-pkgrel=2
+pkgver=2.19.1
+pkgrel=1
 _nodeversion=24
 _electronversion=39
 pkgdesc="Native GOG, Epic Games and Amazon games launcher for Linux"
@@ -32,11 +32,9 @@ optdepends=(
   'umu-launcher: Proton support'
 )
 source=("git+https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher.git#tag=v$pkgver"
-        'https://github.com/Heroic-Games-Launcher/legendary/releases/download/0.20.38/legendary_linux_x86_64'
         'heroic.sh'
         'fix-exec-heroic.patch')
-sha256sums=('1d72786287b249c8e7f3e3f024e0c0aecfd749c4c36f21389402e0a4a3df3562'
-            '5663b221d46ffd98ed4ca1bbaa803af9ac22b371fa1af8261b11758cb9b20893'
+sha256sums=('ad59d6a594e3b07945f27c0d790ab7b89926b46f3efc8a221d29b03725e9fb28'
             'add3cbb1bfa52db93065dfbb1221a1ab3bfa03fbe0a7ab79829e8fd35a68c922'
             '3bbf6f9f071687d50898de76d1762bc39a3749c2685dd0af932579f9029a3123')
 
@@ -100,9 +98,4 @@ package() {
     "${pkgdir}/usr/share/icons/hicolor/1024x1024/apps/${_app_id}.png"
 
   install -Dm644 "flatpak/${_app_id}.desktop" -t "${pkgdir}/usr/share/applications/"
-
-  # https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher/issues/5217
-  # https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher/issues/5220#issuecomment-3802936770
-  install -Dm755 "$srcdir/legendary_linux_x86_64" "$pkgdir/opt/heroic/app.asar.unpacked/build/bin/x64/linux/legendary"
 }
-
