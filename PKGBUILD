@@ -3,7 +3,7 @@
 
 pkgname=heroic-games-launcher
 _app_id=com.heroicgameslauncher.hgl
-pkgver=2.20.0
+pkgver=2.20.1
 pkgrel=1
 _nodeversion=24
 _electronversion=39
@@ -34,7 +34,7 @@ optdepends=(
 source=("git+https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher.git#tag=v$pkgver"
         'heroic.sh'
         'fix-exec-heroic.patch')
-sha256sums=('b74b079cfbd3b946c577bde94b45b71fbee969e3335ba428c0573c69d523ef7e'
+sha256sums=('49d8fc58ae0a189e3488922f89f8148a5e51d33237e755e9e94b0aeab6c310da'
             'add3cbb1bfa52db93065dfbb1221a1ab3bfa03fbe0a7ab79829e8fd35a68c922'
             '3bbf6f9f071687d50898de76d1762bc39a3749c2685dd0af932579f9029a3123')
 
