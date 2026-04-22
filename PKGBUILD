@@ -3,16 +3,17 @@
 
 pkgname=heroic-games-launcher
 _app_id=com.heroicgameslauncher.hgl
-pkgver=2.20.1
+pkgver=2.21.0
 pkgrel=1
 _nodeversion=24
-_electronversion=39
+_electronversion=41
 pkgdesc="Native GOG, Epic Games and Amazon games launcher for Linux"
 arch=('x86_64')
 url="https://heroicgameslauncher.com/"
 license=('GPL-3.0-only')
 depends=(
-  "electron${_electronversion}"
+#  "electron${_electronversion}"
+  'gtk3'
   'rsync'
   'which'
 )
@@ -34,7 +35,7 @@ optdepends=(
 source=("git+https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher.git#tag=v$pkgver"
         'heroic.sh'
         'fix-exec-heroic.patch')
-sha256sums=('49d8fc58ae0a189e3488922f89f8148a5e51d33237e755e9e94b0aeab6c310da'
+sha256sums=('21688922debbd629998cdf97e918ead65fcb747159196449408f5b2282886441'
             'add3cbb1bfa52db93065dfbb1221a1ab3bfa03fbe0a7ab79829e8fd35a68c922'
             '3bbf6f9f071687d50898de76d1762bc39a3749c2685dd0af932579f9029a3123')
 
@@ -55,7 +56,7 @@ prepare() {
   nvm install "${_nodeversion}"
 
   # Set Exec
-  desktop-file-edit --set-key=Exec --set-value="heroic --ozone-platform-hint=auto %u" \
+  desktop-file-edit --set-key=Exec --set-value="heroic %u" \
     "flatpak/${_app_id}.desktop"
 
   sed -i "s|@ELECTRONVERSION@|${_electronversion}|" "$srcdir/heroic.sh"
@@ -67,16 +68,17 @@ prepare() {
 build() {
   cd HeroicGamesLauncher
   export PNPM_HOME="$srcdir/pnpm-home"
-  export PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
-  export ELECTRON_SKIP_BINARY_DOWNLOAD=1
-  electronDist="/usr/lib/electron${_electronversion}"
-  electronVer="$(sed s/^v// /usr/lib/electron${_electronversion}/version)"
+#  export PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
+#  export ELECTRON_SKIP_BINARY_DOWNLOAD=1
+#  electronDist="/usr/lib/electron${_electronversion}"
+#  electronVer="$(sed s/^v// /usr/lib/electron${_electronversion}/version)"
   _ensure_local_nvm
   pnpm install
   pnpm download-helper-binaries
   pnpm electron-vite build
-  pnpm electron-builder --linux --x64 --dir \
-    ${dist} -c.electronDist=${electronDist} -c.electronVersion=${electronVer}
+#  pnpm electron-builder --linux --x64 --dir \
+ #   ${dist} -c.electronDist=${electronDist} -c.electronVersion=${electronVer}
+  pnpm electron-builder --linux --x64 --dir
 
   for i in 16 32 48 64 128 256 512; do
     magick public/icon.png -resize "${i}x${i}" "public/icon_${i}x${i}.png"
@@ -85,10 +87,14 @@ build() {
 
 package() {
   cd HeroicGamesLauncher
-  install -Dm644 dist/linux-unpacked/resources/app.asar -t "$pkgdir/opt/heroic/"
-  cp -r dist/linux-unpacked/resources/app.asar.unpacked "$pkgdir/opt/heroic"
+#  install -Dm644 dist/linux-unpacked/resources/app.asar -t "$pkgdir/opt/Heroic/"
+#  cp -r dist/linux-unpacked/resources/app.asar.unpacked "$pkgdir/opt/Heroic"
+  install -d "$pkgdir/opt/Heroic"
+  cp -r dist/linux-unpacked/* "$pkgdir/opt/Heroic/"
 
-  install -Dm755 "$srcdir/heroic.sh" "$pkgdir/usr/bin/heroic"
+#  install -Dm755 "$srcdir/heroic.sh" "$pkgdir/usr/bin/heroic"
+  install -d "$pkgdir/usr/bin"
+  ln -s /opt/Heroic/heroic "$pkgdir/usr/bin/heroic"
 
   for i in 16 32 48 64 128 256 512; do
     install -Dm644 public/icon_${i}x${i}.png \
