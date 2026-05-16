@@ -3,8 +3,8 @@
 
 pkgname=heroic-games-launcher
 _app_id=com.heroicgameslauncher.hgl
-pkgver=2.21.0
-pkgrel=2
+pkgver=2.22.0
+pkgrel=1
 _nodeversion=24
 _electronversion=41
 pkgdesc="Native GOG, Epic Games and Amazon games launcher for Linux"
@@ -34,7 +34,7 @@ optdepends=(
 source=("git+https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher.git#tag=v$pkgver"
         'heroic.sh'
         'fix-exec-heroic.patch')
-sha256sums=('21688922debbd629998cdf97e918ead65fcb747159196449408f5b2282886441'
+sha256sums=('7c11eb3e375edf7864177e0eb7452d7b4ef75be85dfd54f60704bae23304d0dc'
             '965e1df4608e665cafa60d17b180d2522cd6241cfa9b50a21c3b2f2b389d97a0'
             '3bbf6f9f071687d50898de76d1762bc39a3749c2685dd0af932579f9029a3123')
 
@@ -51,15 +51,15 @@ _ensure_local_nvm() {
 
 prepare() {
   cd HeroicGamesLauncher
-#  _ensure_local_nvm
-#  nvm install "${_nodeversion}"
+  _ensure_local_nvm
+  nvm install "${_nodeversion}"
 
   # Set Exec
   desktop-file-edit --set-key=Exec --set-value="heroic %u" \
     "flatpak/${_app_id}.desktop"
 
   sed -i "s|@ELECTRONVERSION@|${_electronversion}|" "$srcdir/heroic.sh"
-  
+
   # Fix Add-to-Steam
   patch -p1 -i $srcdir/fix-exec-heroic.patch
 }
