@@ -50,9 +50,12 @@ _ensure_local_nvm() {
 }
 
 prepare() {
-  cd HeroicGamesLauncher
   _ensure_local_nvm
   nvm install "${_nodeversion}"
+
+  cd HeroicGamesLauncher
+  export PNPM_HOME="$srcdir/pnpm-home"
+  pnpm install --frozen-lockfile
 
   # Set Exec
   desktop-file-edit --set-key=Exec --set-value="heroic %u" \
@@ -72,12 +75,12 @@ build() {
   electronDist="/usr/lib/electron${_electronversion}"
   electronVer="$(sed s/^v// /usr/lib/electron${_electronversion}/version)"
   _ensure_local_nvm
-  pnpm install
   pnpm download-helper-binaries
   pnpm electron-vite build
   pnpm electron-builder --linux --x64 --dir \
     ${dist} -c.electronDist=${electronDist} -c.electronVersion=${electronVer}
 
+  # Generate icons
   for i in 16 32 48 64 128 256 512; do
     magick public/icon.png -resize "${i}x${i}" "public/icon_${i}x${i}.png"
   done
