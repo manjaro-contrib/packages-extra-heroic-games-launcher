@@ -3,7 +3,7 @@
 
 pkgname=heroic-games-launcher
 _app_id=com.heroicgameslauncher.hgl
-pkgver=2.22.0
+pkgver=2.22.1
 pkgrel=1
 _nodeversion=24
 _electronversion=41
@@ -34,9 +34,9 @@ optdepends=(
 source=("git+https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher.git#tag=v$pkgver"
         'heroic.sh'
         'fix-exec-heroic.patch')
-sha256sums=('7c11eb3e375edf7864177e0eb7452d7b4ef75be85dfd54f60704bae23304d0dc'
+sha256sums=('cabb6f90e46f34f4af7388e3ab7c40ddd3502cda73fbeb145d40080d8f76d995'
             '965e1df4608e665cafa60d17b180d2522cd6241cfa9b50a21c3b2f2b389d97a0'
-            '3bbf6f9f071687d50898de76d1762bc39a3749c2685dd0af932579f9029a3123')
+            'd97ad2117acda5e0b8b94728c571af43b54d405533d0cd2da99f397a0c948e50')
 
 _ensure_local_nvm() {
   # let's be sure we are starting clean
@@ -57,14 +57,14 @@ prepare() {
   export PNPM_HOME="$srcdir/pnpm-home"
   pnpm install --frozen-lockfile
 
+  # Fix Add-to-Steam
+  patch -Np1 -i $srcdir/fix-exec-heroic.patch
+
   # Set Exec
-  desktop-file-edit --set-key=Exec --set-value="heroic %u" \
+  desktop-file-edit --set-key=Exec --set-value="heroic %U" \
     "flatpak/${_app_id}.desktop"
 
   sed -i "s|@ELECTRONVERSION@|${_electronversion}|" "$srcdir/heroic.sh"
-
-  # Fix Add-to-Steam
-  patch -p1 -i $srcdir/fix-exec-heroic.patch
 }
 
 build() {
