@@ -4,9 +4,9 @@
 pkgname=heroic-games-launcher
 _app_id=com.heroicgameslauncher.hgl
 pkgver=2.22.1
-pkgrel=1
+pkgrel=2
 _nodeversion=24
-_electronversion=41
+_electronversion=43
 pkgdesc="Native GOG, Epic Games and Amazon games launcher for Linux"
 arch=('x86_64')
 url="https://heroicgameslauncher.com/"
